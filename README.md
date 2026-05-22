@@ -29,39 +29,71 @@ Best Result:
 Random Forest with k=3
 
 
-### Student C Tasks
+## Student C Tasks
 
- Data Preparation and Dataset Setup
+### Data Collection and Dataset Preparation
 
-This part focuses on preparing protein sequence data for training and testing.
+Tasks completed:
 
-### Steps Performed
-
-- Download protein sequences from UniProt
-- Extract sequences from FASTA files
-- Filter protein sequence lengths
-- Create labeled dataset:
+- Downloaded protein sequence data from UniProt
+- Collected four protein families:
   - Kinases
   - Proteases
   - Transporters
   - Receptors
-- Split dataset into:
-  - Training set (80%)
-  - Testing set (20%)
-- Generate:
+
+- Parsed FASTA files using BioPython
+- Filtered protein sequence lengths (50–1000 amino acids)
+- Created labeled dataset
+- Converted records into a Pandas DataFrame
+- Applied stratified train-test split:
+  - Training set: 80%
+  - Testing set: 20%
+
+- Generated:
   - train.fasta
   - test.fasta
 
-## Dataset Summary
+## Results
 
-Total sequences collected from protein families and prepared for machine learning and deep learning experiments.
+Dataset statistics:
 
-## Technologies Used
+Training samples: 531 sequences  
+Testing samples: 133 sequences  
 
-- Python
-- Pandas
-- BioPython
-- Scikit-learn
+Class distribution:
+
+- Proteases: 149
+- Transporters: 131
+- Receptors: 129
+- Kinases: 122
+
+Generated FASTA files successfully:
+
+train.fasta → 531 sequences  
+test.fasta → 133 sequences
+### BLAST Baseline Evaluation
+
+Tasks completed:
+
+- Implemented BLAST as a baseline method
+- Compared protein sequences using similarity search
+- Generated prediction labels
+- Evaluated baseline performance using Confusion Matrix
+- Visualized classification performance
+
+## BLAST Results
+
+Confusion Matrix observations:
+
+- Kinases correctly classified: 25
+- Proteases correctly classified: 35
+- Transporters correctly classified: 14
+- Receptors correctly classified: 25
+
+Minor misclassifications observed between related protein families.
+
+BLAST baseline achieved strong performance and was used as a reference for comparison with Machine Learning and CNN models.
 
 ## Student
 Mohamed Karim 221010054
