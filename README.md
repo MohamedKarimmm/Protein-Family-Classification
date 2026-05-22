@@ -28,6 +28,41 @@ CNN Accuracy: 0.34
 Best Result:
 Random Forest with k=3
 
+
+ Student C Tasks
+
+### Data Preparation and Dataset Setup
+
+This part focuses on preparing protein sequence data for training and testing.
+
+### Steps Performed
+
+- Download protein sequences from UniProt
+- Extract sequences from FASTA files
+- Filter protein sequence lengths
+- Create labeled dataset:
+  - Kinases
+  - Proteases
+  - Transporters
+  - Receptors
+- Split dataset into:
+  - Training set (80%)
+  - Testing set (20%)
+- Generate:
+  - train.fasta
+  - test.fasta
+
+## Dataset Summary
+
+Total sequences collected from protein families and prepared for machine learning and deep learning experiments.
+
+## Technologies Used
+
+- Python
+- Pandas
+- BioPython
+- Scikit-learn
+
 ## Student
 Mohamed Karim 221010054
 
