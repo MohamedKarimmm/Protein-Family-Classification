@@ -29,9 +29,9 @@ Best Result:
 Random Forest with k=3
 
 
- Student C Tasks
+### Student C Tasks
 
-### Data Preparation and Dataset Setup
+ Data Preparation and Dataset Setup
 
 This part focuses on preparing protein sequence data for training and testing.
 
