@@ -1,0 +1,327 @@
+import gzip
+import random
+from Bio import SeqIO
+
+file_names = [
+'uniprotkb_reviewed_true_AND_organism_id_2026_05_21.fasta.gz',
+'uniprotkb_reviewed_true_AND_organism_id_2026_05_21.fasta (1).gz',
+'uniprotkb_reviewed_true_AND_organism_id_2026_05_21.fasta (2).gz',
+'uniprotkb_reviewed_true_AND_organism_id_2026_05_21.fasta (3).gz'
+]
+
+data=[]
+
+labels=[
+"kinase",
+"protease",
+"transporter",
+"receptor"
+]
+
+for file,label in zip(file_names,labels):
+
+    with gzip.open(file,'rt') as f:
+
+        sequences=list(
+            SeqIO.parse(
+                f,
+                "fasta"
+            )
+        )
+
+        random.shuffle(
+            sequences
+        )
+
+        sequences=sequences[:250]
+
+        for seq in sequences:
+
+            data.append(
+                [
+                    str(seq.seq),
+                    label
+                ]
+            )
+
+print("Total samples:",
+      len(data))
+
+print(data[:2])
+
+import pandas as pd
+
+df=pd.DataFrame(
+    data,
+    columns=[
+        "sequence",
+        "label"
+    ]
+)
+
+print(df.head())
+
+print(df.shape)
+
+from collections import Counter
+
+def get_kmers(sequence,k=4):
+
+    return [sequence[i:i+k]
+            for i in range(len(sequence)-k+1)]
+
+all_kmers=[]
+
+for seq in df["sequence"]:
+
+    all_kmers.extend(get_kmers(seq))
+
+top_kmers=[x[0]
+            for x in Counter(all_kmers).most_common(1000)]
+
+print("Number of kmers:",len(top_kmers))
+f vectorize(sequence):
+
+    kmers=get_kmers(sequence)
+
+    counts=Counter(kmers)
+
+    return [counts[k] for k in top_kmers]
+
+X=df["sequence"].apply(vectorize)
+
+X=pd.DataFrame(X.tolist())
+
+y=df["label"]
+
+from sklearn.model_selection import train_test_split
+
+X_train,X_test,y_train,y_test=train_test_split(
+    X,
+    y,
+    test_size=0.2,
+    random_state=42
+)
+
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import classification_report,accuracy_score
+
+model=RandomForestClassifier(
+    n_estimators=100
+)
+
+model.fit(X_train,y_train)
+
+pred=model.predict(X_test)
+
+print("Accuracy:",
+      accuracy_score(y_test,pred))
+
+print(classification_report(
+    y_test,
+    pred
+))
+
+from sklearn.metrics import confusion_matrix
+import matplotlib.pyplot as plt
+import numpy as np
+
+cm = confusion_matrix(y_test,pred)
+
+labels=[
+'kinase',
+'protease',
+'receptor',
+'transporter'
+]
+
+plt.figure(figsize=(8,6))
+
+plt.imshow(cm)
+
+plt.colorbar()
+
+plt.xticks(
+np.arange(len(labels)),
+labels,
+rotation=45
+)
+
+plt.yticks(
+np.arange(len(labels)),
+labels
+)
+
+plt.xlabel(
+"Predicted"
+)
+
+plt.ylabel(
+"True"
+)
+
+plt.title(
+"Confusion Matrix"
+)
+
+for i in range(len(labels)):
+    for j in range(len(labels)):
+        plt.text(
+            j,
+            i,
+            cm[i,j],
+            ha='center'
+        )
+import pandas as pd
+
+comparison = pd.DataFrame({
+
+"Model":[
+"Random Forest",
+"Random Forest"
+],
+
+"k":[
+3,
+4
+],
+
+"Accuracy":[
+0.375,
+0.35
+]
+
+})
+
+print(comparison)
+
+# ==========================
+# ### 1D CNN
+# ==========================
+
+amino_acids = "ACDEFGHIKLMNPQRSTVWY"
+
+char_to_int = {
+    c:i+1
+    for i,c in enumerate(amino_acids)
+}
+
+def encode_seq(seq):
+
+    return [
+
+        char_to_int.get(
+            x,
+            0
+        )
+
+        for x in seq
+    ]
+
+X_encoded = [
+    encode_seq(seq)
+    for seq in df["sequence"]
+]
+
+X = pad_sequences(
+    X_encoded,
+    maxlen=500,
+    padding='post'
+)
+
+encoder=LabelEncoder()
+
+y=encoder.fit_transform(
+    df["label"]
+)
+
+print(X.shape)
+print(y.shape)
+
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Embedding
+from tensorflow.keras.layers import Conv1D
+from tensorflow.keras.layers import MaxPooling1D
+from tensorflow.keras.layers import Flatten
+from tensorflow.keras.layers import Dense
+from tensorflow.keras.layers import Dropout
+
+model = Sequential()
+
+model.add(
+    Embedding(
+        input_dim=21,
+        output_dim=32,
+        input_length=500
+    )
+)
+
+model.add(
+    Conv1D(
+        filters=64,
+        kernel_size=5,
+        activation='relu'
+    )
+)
+
+model.add(
+    MaxPooling1D(
+        pool_size=2
+    )
+)
+
+model.add(
+    Flatten()
+)
+
+model.add(
+    Dense(
+        64,
+        activation='relu'
+    )
+)
+
+model.add(
+    Dropout(
+        0.5
+    )
+)
+
+model.add(
+    Dense(
+        4,
+        activation='softmax'
+    )
+)
+
+model.compile(
+    optimizer='adam',
+    loss='sparse_categorical_crossentropy',
+    metrics=['accuracy']
+)
+
+model.summary()
+
+history = model.fit(
+    X_train,
+    y_train,
+    epochs=10,
+    batch_size=32,
+    validation_split=0.2
+)
+import numpy as np
+from sklearn.metrics import classification_report
+
+pred = model.predict(X_test)
+
+pred = np.argmax(
+    pred,
+    axis=1
+)
+
+print(
+classification_report(
+    y_test,
+    pred
+))
+
