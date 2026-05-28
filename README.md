@@ -13,7 +13,6 @@ Classes:
 
 ## Student B Tasks
 - Random Forest with k-mer (k=3, k=4)
-- CNN model
 - Performance comparison
 - Confusion Matrix
 
@@ -23,7 +22,7 @@ Random Forest (k=3): 0.375
 
 Random Forest (k=4): 0.350
 
-CNN Accuracy: 0.34
+
 
 Best Result:
 Random Forest with k=3
